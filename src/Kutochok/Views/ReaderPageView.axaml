@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Kutochok.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="820" d:DesignHeight="640"
+             x:Class="Kutochok.Views.ReaderPageView"
+             x:DataType="vm:ReaderPageViewModel">
+
+    <DockPanel Margin="0,16,0,0">
+
+        <!-- ===================== Панель дій ===================== -->
+        <Border DockPanel.Dock="Top"
+                BorderBrush="{DynamicResource AppBorder}"
+                BorderThickness="0,0,0,1"
+                Padding="24,0,24,12">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="← Back" Click="OnBack" />
+                <Button Content="Edit" Classes="primary" Click="OnEdit" />
+                <Button Content="Delete" Classes="danger" Click="OnDelete" />
+                <TextBlock Name="StatusText" VerticalAlignment="Center" Margin="8,0" FontSize="13" />
+            </StackPanel>
+        </Border>
+
+        <!-- ===================== Текст ===================== -->
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" Padding="24,20,24,32">
+            <StackPanel MaxWidth="760" HorizontalAlignment="Left" Spacing="14">
+
+                <SelectableTextBlock Text="{Binding Title}"
+                                     FontSize="27"
+                                     FontWeight="SemiBold"
+                                     TextWrapping="Wrap" />
+
+                <SelectableTextBlock Text="{Binding Meta}"
+                                     Classes="faint"
+                                     FontSize="13"
+                                     IsVisible="{Binding HasMeta}"
+                                     Margin="0,-8,0,0" />
+
+                <!-- Поля, яких немає в заголовку й тілі: посилання, стек, тека -->
+                <ItemsControl ItemsSource="{Binding Details}" IsVisible="{Binding HasDetails}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:DetailViewModel">
+                            <Grid ColumnDefinitions="110,*" Margin="0,0,0,4">
+                                <TextBlock Grid.Column="0" Text="{Binding Label}" Classes="faint" />
+                                <SelectableTextBlock Grid.Column="1"
+                                                     Text="{Binding Value}"
+                                                     IsVisible="{Binding !IsLink}"
+                                                     FontSize="13" />
+                                <Button Grid.Column="1"
+                                        Classes="linkish"
+                                        Content="{Binding Value}"
+                                        Tag="{Binding Url}"
+                                        Click="OnOpenLink"
+                                        IsVisible="{Binding IsLink}"
+                                        HorizontalAlignment="Left" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Border Height="1" Background="{DynamicResource AppBorder}" Margin="0,4" />
+
+                <!-- Сюди рендериться markdown -->
+                <ContentControl Name="BodyHost" />
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

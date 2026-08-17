@@ -49,7 +49,9 @@ public sealed record CollectionDef(
     IReadOnlyList<FieldDef> Fields,
     string? RootKey = null,
     string? SortBy = null,
-    string? Hint = null)
+    string? Hint = null,
+    /// <summary>Поле, за яким список ділиться на теки/групи із заголовками.</summary>
+    string? GroupBy = null)
 {
     public FieldDef? Body => Fields.FirstOrDefault(f => f.Widget == Widget.Markdown);
 
@@ -60,84 +62,89 @@ public sealed record CollectionDef(
 public static class Schema
 {
     private static readonly FieldDef Tags = new(
-        "tags", "Теги", Widget.List,
-        Help: "Через кому. За ними працюють фільтр і пошук.");
+        "tags", "Tags", Widget.List,
+        Help: "Comma separated. Used by the filter and search.");
 
     public static readonly IReadOnlyList<CollectionDef> Collections =
     [
         new CollectionDef(
-            "notes", "Записи", "запис", StorageKind.Markdown, "notes",
+            "notes", "Notes", "note", StorageKind.Markdown, "notes",
             SortBy: "date",
-            Hint: "Довгі тексти: думки, чернетки, щоденник",
+            Hint: "Longer writing: thoughts, drafts, journal",
             Fields:
             [
-                new FieldDef("title", "Заголовок", Widget.Text, Required: true),
-                new FieldDef("date", "Дата", Widget.Date, Required: true),
+                new FieldDef("title", "Title", Widget.Text, Required: true),
+                new FieldDef("date", "Date", Widget.Date, Required: true),
                 Tags,
-                new FieldDef("body", "Текст", Widget.Markdown, Required: true),
+                new FieldDef("body", "Text", Widget.Markdown, Required: true),
             ]),
 
         new CollectionDef(
-            "til", "TIL", "замітку", StorageKind.Markdown, "til",
+            "til", "TIL", "TIL", StorageKind.Markdown, "til",
             SortBy: "date",
-            Hint: "Today I learned — дрібниці, які шкода забути",
+            Hint: "Today I learned — small things worth keeping",
             Fields:
             [
-                new FieldDef("title", "Заголовок", Widget.Text, Required: true),
-                new FieldDef("date", "Дата", Widget.Date, Required: true),
+                new FieldDef("title", "Title", Widget.Text, Required: true),
+                new FieldDef("date", "Date", Widget.Date, Required: true),
                 Tags,
-                new FieldDef("source", "Джерело", Widget.Url, Help: "Звідки дізнався."),
-                new FieldDef("body", "Текст", Widget.Markdown, Required: true),
+                new FieldDef("source", "Source", Widget.Url, Help: "Where you learned it."),
+                new FieldDef("body", "Text", Widget.Markdown, Required: true),
             ]),
 
         new CollectionDef(
-            "books", "Книги", "книжку", StorageKind.Yaml, "books.yaml",
+            "books", "Books", "book", StorageKind.Yaml, "books.yaml",
             RootKey: "books",
             SortBy: "year",
-            Hint: "Статистика й графік рахуються самі",
+            Hint: "Stats and the chart are computed automatically",
             Fields:
             [
-                new FieldDef("title", "Назва", Widget.Text, Required: true),
-                new FieldDef("status", "Статус", Widget.Select,
-                    Help: "«Читаю зараз» піднімає книжку на початок списку.",
-                    Options: [new SelectOption("read", "прочитано"), new SelectOption("reading", "читаю зараз")]),
-                new FieldDef("year", "Рік", Widget.Number, Min: 1900, Max: 2200, Step: 1),
-                new FieldDef("rating", "Оцінка", Widget.Number, Min: 0, Max: 5, Step: 0.5),
-                new FieldDef("note", "Враження", Widget.TextArea),
-                new FieldDef("url", "Посилання", Widget.Url),
+                new FieldDef("title", "Title", Widget.Text, Required: true),
+                new FieldDef("status", "Status", Widget.Select,
+                    Help: "«Reading now» keeps the book at the top of the list.",
+                    Options: [new SelectOption("read", "read"), new SelectOption("reading", "reading now")]),
+                new FieldDef("year", "Year", Widget.Number, Min: 1900, Max: 2200, Step: 1),
+                new FieldDef("rating", "Rating", Widget.Number, Min: 0, Max: 5, Step: 0.5),
+                new FieldDef("note", "Thoughts", Widget.TextArea),
+                new FieldDef("url", "Link", Widget.Url),
             ]),
 
         new CollectionDef(
-            "projects", "Проєкти", "проєкт", StorageKind.Yaml, "projects.yaml",
+            "projects", "Projects", "project", StorageKind.Yaml, "projects.yaml",
             RootKey: "projects",
             SortBy: "year",
+            GroupBy: "folder",
+            Hint: "Grouped into folders — type any name you like",
             Fields:
             [
-                new FieldDef("title", "Назва", Widget.Text, Required: true),
-                new FieldDef("description", "Опис", Widget.TextArea, Required: true),
-                new FieldDef("status", "Статус", Widget.Select,
+                new FieldDef("title", "Title", Widget.Text, Required: true),
+                new FieldDef("folder", "Folder", Widget.Text,
+                    Help: "For example: Work, Side projects. Empty means «No folder»."),
+                new FieldDef("description", "Description", Widget.TextArea, Required: true),
+                new FieldDef("status", "Status", Widget.Select,
                     Options:
                     [
-                        new SelectOption("active", "в роботі"),
-                        new SelectOption("done", "завершено"),
-                        new SelectOption("paused", "на паузі"),
+                        new SelectOption("active", "active"),
+                        new SelectOption("done", "done"),
+                        new SelectOption("paused", "paused"),
                     ]),
-                new FieldDef("year", "Рік", Widget.Number, Min: 1900, Max: 2200, Step: 1),
-                new FieldDef("stack", "Стек", Widget.List, Help: "Через кому: Unity, C#"),
-                new FieldDef("url", "Посилання", Widget.Url),
-                new FieldDef("repo", "Репозиторій", Widget.Url),
+                new FieldDef("year", "Year", Widget.Number, Min: 1900, Max: 2200, Step: 1),
+                new FieldDef("stack", "Stack", Widget.List, Help: "Comma separated: Unity, C#"),
+                new FieldDef("url", "Link", Widget.Url),
+                new FieldDef("repo", "Repository", Widget.Url),
             ]),
 
         new CollectionDef(
-            "links", "Посилання", "посилання", StorageKind.Yaml, "links.yaml",
+            "links", "Links", "link", StorageKind.Yaml, "links.yaml",
             RootKey: "links",
-            Hint: "Те, що варто зберегти й колись перечитати",
+            GroupBy: "group",
+            Hint: "Worth keeping and re-reading some day",
             Fields:
             [
-                new FieldDef("title", "Назва", Widget.Text, Required: true),
-                new FieldDef("url", "Адреса", Widget.Url, Required: true),
-                new FieldDef("group", "Група", Widget.Text, Help: "Блоги, Інструменти, …"),
-                new FieldDef("note", "Нотатка", Widget.TextArea),
+                new FieldDef("title", "Title", Widget.Text, Required: true),
+                new FieldDef("url", "Address", Widget.Url, Required: true),
+                new FieldDef("group", "Group", Widget.Text, Help: "Blogs, Tools, …"),
+                new FieldDef("note", "Note", Widget.TextArea),
             ]),
     ];
 

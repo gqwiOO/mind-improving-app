@@ -23,6 +23,18 @@ public sealed class EntryRowViewModel
     public bool HasPreview => Preview is { Length: > 0 };
 }
 
+/// <summary>Тека (група) записів із заголовком.</summary>
+public sealed class EntryGroupViewModel
+{
+    public required string Name { get; init; }
+    public required IReadOnlyList<EntryRowViewModel> Rows { get; init; }
+
+    /// <summary>Заголовок показуємо тільки там, де розділ справді ділиться на теки.</summary>
+    public bool HasName => Name.Length > 0;
+
+    public string Caption => $"{Name}  ·  {Rows.Count}";
+}
+
 /// <summary>Тег у панелі фільтра.</summary>
 public partial class TagChipViewModel : ViewModelBase
 {
@@ -42,15 +54,14 @@ public sealed class YearBarViewModel
 
 public partial class ListPageViewModel : ViewModelBase
 {
-    private static readonly string[] MonthsShort =
-        ["січ", "лют", "бер", "кві", "тра", "чер", "лип", "сер", "вер", "жов", "лис", "гру"];
+    private const string NoGroup = "No folder";
 
     private readonly MainViewModel _main;
     private IReadOnlyList<Entry> _all = [];
 
     public CollectionDef Collection { get; }
 
-    public ObservableCollection<EntryRowViewModel> Rows { get; } = [];
+    public ObservableCollection<EntryGroupViewModel> Groups { get; } = [];
     public ObservableCollection<TagChipViewModel> Tags { get; } = [];
     public ObservableCollection<YearBarViewModel> YearBars { get; } = [];
 
@@ -58,6 +69,7 @@ public partial class ListPageViewModel : ViewModelBase
     [ObservableProperty] private string? _activeTag;
     [ObservableProperty] private string _emptyMessage = string.Empty;
     [ObservableProperty] private bool _isEmpty;
+    [ObservableProperty] private bool _hasTagFilter;
 
     // Статистика читання — показуємо лише в розділі книг
     [ObservableProperty] private bool _showStats;
@@ -69,9 +81,7 @@ public partial class ListPageViewModel : ViewModelBase
     public string Title => Collection.Label;
     public string? Hint => Collection.Hint;
     public bool HasHint => Collection.Hint is { Length: > 0 };
-    public string AddLabel => $"Додати {Collection.Singular}";
-
-    [ObservableProperty] private bool _hasTagFilter;
+    public string AddLabel => $"Add {Collection.Singular}";
 
     public ListPageViewModel(MainViewModel main, CollectionDef collection)
     {
@@ -93,7 +103,7 @@ public partial class ListPageViewModel : ViewModelBase
                          .Distinct(StringComparer.CurrentCultureIgnoreCase)
                          .OrderBy(t => t, StringComparer.CurrentCulture))
             {
-                Tags.Add(new TagChipViewModel { Name = tag });
+                Tags.Add(new TagChipViewModel { Name = tag, IsActive = tag == ActiveTag });
             }
         }
 
@@ -127,15 +137,46 @@ public partial class ListPageViewModel : ViewModelBase
             }
 
             return needle.Length == 0 || entry.SearchHaystack().Contains(needle, StringComparison.Ordinal);
-        });
+        }).ToList();
 
-        Rows.Clear();
-        foreach (var entry in filtered) Rows.Add(BuildRow(entry));
+        Groups.Clear();
+        foreach (var group in BuildGroups(filtered)) Groups.Add(group);
 
-        IsEmpty = Rows.Count == 0;
+        IsEmpty = filtered.Count == 0;
         EmptyMessage = _all.Count == 0
-            ? $"Поки порожньо. Натисни «{AddLabel}»."
-            : "Нічого не знайшлося. Спробуй інше слово або зніми фільтр.";
+            ? $"Nothing here yet. Press «{AddLabel}»."
+            : "Nothing found. Try another word or clear the filter.";
+    }
+
+    /// <summary>
+    /// Ділить записи на теки. Розділи без <c>GroupBy</c> отримують одну
+    /// безіменну групу — тоді список виглядає як звичайний плаский.
+    /// </summary>
+    private List<EntryGroupViewModel> BuildGroups(IReadOnlyList<Entry> entries)
+    {
+        if (Collection.GroupBy is not { } key)
+        {
+            return
+            [
+                new EntryGroupViewModel
+                {
+                    Name = string.Empty,
+                    Rows = entries.Select(BuildRow).ToList(),
+                },
+            ];
+        }
+
+        return entries
+            .GroupBy(e => e.GetString(key)?.Trim() is { Length: > 0 } value ? value : NoGroup)
+            // Записи без теки — в кінець, решта за абеткою
+            .OrderBy(g => g.Key == NoGroup ? 1 : 0)
+            .ThenBy(g => g.Key, StringComparer.CurrentCulture)
+            .Select(g => new EntryGroupViewModel
+            {
+                Name = g.Key,
+                Rows = g.Select(BuildRow).ToList(),
+            })
+            .ToList();
     }
 
     private EntryRowViewModel BuildRow(Entry entry)
@@ -144,22 +185,22 @@ public partial class ListPageViewModel : ViewModelBase
 
         if (entry.GetDate("date") is { } date)
         {
-            meta.Add($"{date.Day} {MonthsShort[date.Month - 1]} {date.Year}");
+            meta.Add(date.ToString("d MMM yyyy", CultureInfo.CurrentCulture));
         }
         else if (entry.GetNumber("year") is { } year)
         {
             meta.Add(((int)year).ToString(CultureInfo.InvariantCulture));
         }
 
-        if (entry.GetString("group") is { } group) meta.Add(group);
         if (entry.GetNumber("rating") is { } rating) meta.Add(FormatRating(rating));
         if (entry.Tags.Count > 0) meta.Add("#" + string.Join("  #", entry.Tags));
 
         string? badge = entry.GetString("status") switch
         {
-            "reading" => "читаю",
-            "active" => "в роботі",
-            "paused" => "на паузі",
+            "reading" => "reading",
+            "active" => "active",
+            "paused" => "paused",
+            "done" => "done",
             _ => null,
         };
 
@@ -235,5 +276,24 @@ public partial class ListPageViewModel : ViewModelBase
 
     public void Add() => _main.ShowEditor(Collection, null);
 
-    public void Open(Entry entry) => _main.ShowEditor(Collection, entry);
+    /// <summary>ЛКМ — відкриваємо на читання, а не одразу у форму.</summary>
+    public void Open(Entry entry) => _main.ShowReader(Collection, entry);
+
+    public void Edit(Entry entry) => _main.ShowEditor(Collection, entry);
+
+    /// <summary>Видаляє запис і оновлює список. Підтвердження питає вигляд.</summary>
+    public string? Delete(Entry entry)
+    {
+        try
+        {
+            _main.Store.Delete(Collection, entry.Id);
+            _main.RefreshCounts();
+            Reload();
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
+    }
 }

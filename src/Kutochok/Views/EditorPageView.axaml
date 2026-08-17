@@ -25,8 +25,8 @@
                 Padding="0,12,0,0"
                 Margin="0,14,0,0">
             <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
-                <Button Grid.Column="0" Classes="primary" Content="Зберегти" Click="OnSave" Margin="0,0,8,0" />
-                <Button Grid.Column="1" Content="Назад" Click="OnBack" />
+                <Button Grid.Column="0" Classes="primary" Content="Save" Click="OnSave" Margin="0,0,8,0" />
+                <Button Grid.Column="1" Content="Back" Click="OnBack" />
                 <TextBlock Grid.Column="2"
                            Name="StatusText"
                            Text="{Binding Status}"
@@ -35,7 +35,7 @@
                            FontSize="13" />
                 <Button Grid.Column="3"
                         Classes="danger"
-                        Content="Видалити"
+                        Content="Delete"
                         Click="OnDelete"
                         IsVisible="{Binding CanDelete}" />
             </Grid>
@@ -51,7 +51,7 @@
             <!-- Блок markdown: панель інструментів, поле і передперегляд -->
             <Grid Grid.Row="1" Name="EditorArea" RowDefinitions="Auto,Auto,*" Margin="0,14,0,0">
 
-                <TextBlock Grid.Row="0" Name="BodyLabel" Text="Текст" Classes="label" />
+                <TextBlock Grid.Row="0" Name="BodyLabel" Text="Text" Classes="label" />
 
                 <Border Grid.Row="1"
                         Background="{DynamicResource AppPanel}"
@@ -63,7 +63,7 @@
                         <WrapPanel Grid.Column="0" Name="Toolbar" />
                         <ToggleButton Grid.Column="1"
                                       Name="PreviewToggle"
-                                      Content="Передперегляд"
+                                      Content="Preview"
                                       IsCheckedChanged="OnTogglePreview"
                                       Background="Transparent"
                                       BorderBrush="Transparent"

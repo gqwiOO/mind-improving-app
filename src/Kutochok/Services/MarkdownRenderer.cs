@@ -38,7 +38,7 @@ public static class MarkdownRenderer
         {
             panel.Children.Add(new TextBlock
             {
-                Text = "Порожньо. Напиши щось у полі поруч.",
+                Text = "Nothing yet. Write something in the box.",
                 Foreground = Brush(owner, "AppFaint"),
                 FontStyle = FontStyle.Italic,
             });
@@ -248,7 +248,7 @@ public static class MarkdownRenderer
         if (link.IsImage)
         {
             // Картинки не показуємо — лишаємо видимий слід, щоб текст не «зникав»
-            return new Run($"[картинка: {(text.Length > 0 ? text : url)}]")
+            return new Run($"[image: {(text.Length > 0 ? text : url)}]")
             {
                 Foreground = Brush(res, "AppFaint"),
                 FontStyle = FontStyle.Italic,

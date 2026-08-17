@@ -36,7 +36,7 @@ public static class ContentPaths
         if (!full.StartsWith(root, StringComparison.Ordinal) &&
             !string.Equals(full, Root, StringComparison.Ordinal))
         {
-            throw new InvalidOperationException($"Шлях виходить за межі теки контенту: {relative}");
+            throw new InvalidOperationException($"Path escapes the content folder: {relative}");
         }
 
         return full;

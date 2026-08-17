@@ -29,7 +29,7 @@ public partial class EditorPageViewModel : ViewModelBase
     private readonly string _openedId;
 
     /// <summary>Заголовок сторінки — назва запису, а не ім’я файлу.</summary>
-    public string Title => IsNew ? $"Додати {Collection.Singular}" : _openedTitle;
+    public string Title => IsNew ? $"Add {Collection.Singular}" : _openedTitle;
 
     /// <summary>Шлях до файлу, який редагуємо — щоб було видно, де це лежить.</summary>
     public string FileHint => Collection.Kind == StorageKind.Markdown
@@ -113,14 +113,14 @@ public partial class EditorPageViewModel : ViewModelBase
             SlugInput = saved.Id;
             IsDirty = false;
             StatusIsError = false;
-            Status = "Збережено";
+            Status = "Saved";
             _main.RefreshCounts();
 
             // Щойно створений запис перестає бути новим: перевідкриваємо сторінку,
             // щоб з'явилися правильний заголовок, шлях до файлу й кнопка видалення
             if (IsNew || saved.Id != _openedId)
             {
-                _main.ShowEditor(Collection, saved, "Збережено");
+                _main.ShowEditor(Collection, saved, "Saved");
             }
 
             return true;

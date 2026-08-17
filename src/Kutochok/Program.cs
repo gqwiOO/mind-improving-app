@@ -10,10 +10,10 @@ internal sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        // Інтерфейс українською: назви місяців у виборі дати, сортування рядків.
+        // Інтерфейс застосунку англійською: назви місяців у виборі дати тощо.
         // Дані у файлах при цьому лишаються в InvariantCulture — крапка як
         // роздільник дробу й дата виду 2026-08-17 незалежно від системи.
-        var ui = new CultureInfo("uk-UA");
+        var ui = new CultureInfo("en-US");
         CultureInfo.DefaultThreadCurrentCulture = ui;
         CultureInfo.DefaultThreadCurrentUICulture = ui;
         Thread.CurrentThread.CurrentCulture = ui;

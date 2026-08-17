@@ -149,6 +149,24 @@
             <Setter Property="CornerRadius" Value="6" />
         </Style>
 
+        <!-- ================= Заголовок теки ================= -->
+        <Style Selector="TextBlock.groupHead">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource AppFaint}" />
+            <Setter Property="Margin" Value="2,10,0,6" />
+        </Style>
+
+        <!-- ================= Посилання-кнопка ================= -->
+        <Style Selector="Button.linkish">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource AppLink}" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
         <!-- ================= Картка статистики ================= -->
         <Style Selector="Border.stat">
             <Setter Property="Background" Value="{DynamicResource AppPanel}" />

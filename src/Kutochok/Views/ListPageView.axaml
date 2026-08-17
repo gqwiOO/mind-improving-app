@@ -24,7 +24,7 @@
 
         <TextBox DockPanel.Dock="Top"
                  Text="{Binding Search}"
-                 PlaceholderText="Пошук по всьому розділу…"
+                 PlaceholderText="Search this section…"
                  Margin="0,0,0,10" />
 
         <!-- ===================== Фільтр за тегами ===================== -->
@@ -62,25 +62,25 @@
                         <Border Classes="stat">
                             <StackPanel>
                                 <TextBlock Text="{Binding StatTotal}" Classes="statValue" />
-                                <TextBlock Text="книг усього" Classes="faint" />
+                                <TextBlock Text="books total" Classes="faint" />
                             </StackPanel>
                         </Border>
                         <Border Classes="stat">
                             <StackPanel>
                                 <TextBlock Text="{Binding StatThisYear}" Classes="statValue" />
-                                <TextBlock Text="цього року" Classes="faint" />
+                                <TextBlock Text="this year" Classes="faint" />
                             </StackPanel>
                         </Border>
                         <Border Classes="stat">
                             <StackPanel>
                                 <TextBlock Text="{Binding StatPerYear}" Classes="statValue" />
-                                <TextBlock Text="у середньому за рік" Classes="faint" />
+                                <TextBlock Text="average per year" Classes="faint" />
                             </StackPanel>
                         </Border>
                         <Border Classes="stat">
                             <StackPanel>
                                 <TextBlock Text="{Binding StatRating}" Classes="statValue" />
-                                <TextBlock Text="середня оцінка" Classes="faint" />
+                                <TextBlock Text="average rating" Classes="faint" />
                             </StackPanel>
                         </Border>
                     </UniformGrid>
@@ -124,44 +124,69 @@
                            HorizontalAlignment="Center"
                            Margin="0,40" />
 
-                <ItemsControl ItemsSource="{Binding Rows}">
+                <ItemsControl ItemsSource="{Binding Groups}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="vm:EntryRowViewModel">
-                            <Button Classes="row"
-                                    Click="OnOpen"
-                                    Tag="{Binding}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Stretch"
-                                    Padding="12,10"
-                                    Margin="0,0,0,6">
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <StackPanel Grid.Column="0" Spacing="2">
-                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
-                                        <TextBlock Text="{Binding Meta}"
-                                                   Classes="faint"
-                                                   IsVisible="{Binding HasMeta}" />
-                                        <TextBlock Text="{Binding Preview}"
-                                                   Classes="muted"
-                                                   FontSize="12.5"
-                                                   MaxLines="2"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   IsVisible="{Binding HasPreview}"
-                                                   Margin="0,2,0,0" />
-                                    </StackPanel>
-                                    <Border Grid.Column="1"
-                                            IsVisible="{Binding HasBadge}"
-                                            BorderBrush="{DynamicResource AppAccent}"
-                                            BorderThickness="1"
-                                            CornerRadius="10"
-                                            Padding="8,1"
-                                            Height="20"
-                                            VerticalAlignment="Top">
-                                        <TextBlock Text="{Binding Badge}"
-                                                   FontSize="11"
-                                                   Foreground="{DynamicResource AppAccent}" />
-                                    </Border>
-                                </Grid>
-                            </Button>
+                        <DataTemplate x:DataType="vm:EntryGroupViewModel">
+                            <StackPanel Margin="0,0,0,6">
+
+                                <!-- Заголовок теки — тільки там, де є групування -->
+                                <TextBlock Text="{Binding Caption}"
+                                           IsVisible="{Binding HasName}"
+                                           Classes="groupHead" />
+
+                                <ItemsControl ItemsSource="{Binding Rows}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="vm:EntryRowViewModel">
+                                            <Button Classes="row"
+                                                    Click="OnOpen"
+                                                    Tag="{Binding}"
+                                                    HorizontalAlignment="Stretch"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    Padding="12,10"
+                                                    Margin="0,0,0,6">
+
+                                                <!-- ПКМ: швидкі дії -->
+                                                <Button.ContextFlyout>
+                                                    <MenuFlyout>
+                                                        <MenuItem Header="Open" Click="OnMenuOpen" Tag="{Binding}" />
+                                                        <MenuItem Header="Edit" Click="OnMenuEdit" Tag="{Binding}" />
+                                                        <Separator />
+                                                        <MenuItem Header="Delete" Click="OnMenuDelete" Tag="{Binding}" />
+                                                    </MenuFlyout>
+                                                </Button.ContextFlyout>
+
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <StackPanel Grid.Column="0" Spacing="2">
+                                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                                        <TextBlock Text="{Binding Meta}"
+                                                                   Classes="faint"
+                                                                   IsVisible="{Binding HasMeta}" />
+                                                        <TextBlock Text="{Binding Preview}"
+                                                                   Classes="muted"
+                                                                   FontSize="12.5"
+                                                                   MaxLines="2"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   IsVisible="{Binding HasPreview}"
+                                                                   Margin="0,2,0,0" />
+                                                    </StackPanel>
+                                                    <Border Grid.Column="1"
+                                                            IsVisible="{Binding HasBadge}"
+                                                            BorderBrush="{DynamicResource AppAccent}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="10"
+                                                            Padding="8,1"
+                                                            Height="20"
+                                                            VerticalAlignment="Top">
+                                                        <TextBlock Text="{Binding Badge}"
+                                                                   FontSize="11"
+                                                                   Foreground="{DynamicResource AppAccent}" />
+                                                    </Border>
+                                                </Grid>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

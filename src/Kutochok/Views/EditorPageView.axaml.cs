@@ -140,7 +140,7 @@ public partial class EditorPageView : UserControl
             default:
             {
                 var box = MakeBox(current as string, multiline: false);
-                if (field.Widget == Widget.List) box.PlaceholderText = "через кому";
+                if (field.Widget == Widget.List) box.PlaceholderText = "comma separated";
                 if (field.Widget == Widget.Url) box.PlaceholderText = "https://…";
                 control = box;
                 _readers.Add((field, () => box.Text));
@@ -173,12 +173,12 @@ public partial class EditorPageView : UserControl
     private Control BuildSlugField(EditorPageViewModel model)
     {
         var panel = new StackPanel { Spacing = 3 };
-        panel.Children.Add(new TextBlock { Text = "Ім’я файлу", Classes = { "label" } });
+        panel.Children.Add(new TextBlock { Text = "File name", Classes = { "label" } });
 
         var box = new TextBox
         {
             Text = model.SlugInput,
-            PlaceholderText = "зробиться із заголовка",
+            PlaceholderText = "made from the title",
         };
         box.TextChanged += (_, _) =>
         {
@@ -189,7 +189,7 @@ public partial class EditorPageView : UserControl
         panel.Children.Add(box);
         panel.Children.Add(new TextBlock
         {
-            Text = "Латиниця, цифри, дефіс. Зміниш — файл перейменується.",
+            Text = "Latin letters, digits, hyphen. Changing it renames the file.",
             Classes = { "faint" },
         });
         return panel;
@@ -231,17 +231,17 @@ public partial class EditorPageView : UserControl
 
         Tool[] tools =
         [
-            new("Ж", "Жирний", t => Wrap(t, "**", "**", "текст")),
-            new("І", "Курсив", t => Wrap(t, "*", "*", "текст")),
-            new("H2", "Підзаголовок", t => Prefix(t, _ => "## ")),
-            new("H3", "Менший підзаголовок", t => Prefix(t, _ => "### ")),
-            new("🔗", "Посилання", t => Wrap(t, "[", "](https://)", "підпис")),
-            new("❝", "Цитата", t => Prefix(t, _ => "> ")),
-            new("•", "Список", t => Prefix(t, _ => "- ")),
-            new("1.", "Нумерований список", t => Prefix(t, i => $"{i + 1}. ")),
-            new("<>", "Код у рядку", t => Wrap(t, "`", "`", "код")),
-            new("{ }", "Блок коду", t => Wrap(t, "```\n", "\n```", "код")),
-            new("—", "Роздільник", t => Wrap(t, "\n---\n", "", "")),
+            new("B", "Bold", t => Wrap(t, "**", "**", "text")),
+            new("I", "Italic", t => Wrap(t, "*", "*", "text")),
+            new("H2", "Heading", t => Prefix(t, _ => "## ")),
+            new("H3", "Smaller heading", t => Prefix(t, _ => "### ")),
+            new("🔗", "Link", t => Wrap(t, "[", "](https://)", "label")),
+            new("❝", "Quote", t => Prefix(t, _ => "> ")),
+            new("•", "Bullet list", t => Prefix(t, _ => "- ")),
+            new("1.", "Numbered list", t => Prefix(t, i => $"{i + 1}. ")),
+            new("<>", "Inline code", t => Wrap(t, "`", "`", "code")),
+            new("{ }", "Code block", t => Wrap(t, "```\n", "\n```", "code")),
+            new("—", "Divider", t => Wrap(t, "\n---\n", "", "")),
         ];
 
         foreach (var tool in tools)
@@ -366,8 +366,8 @@ public partial class EditorPageView : UserControl
 
         var confirmed = await ConfirmDialog.AskAsync(
             owner,
-            "Видалити назавжди?",
-            $"«{model.Title}» буде стерто з диска. Скасувати це неможливо.");
+            "Delete permanently?",
+            $"«{model.Title}» will be erased from disk. This cannot be undone.");
 
         if (confirmed) model.Delete();
     }

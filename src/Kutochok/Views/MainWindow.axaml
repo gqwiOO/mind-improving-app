@@ -8,7 +8,7 @@
         x:DataType="vm:MainViewModel"
         Width="1100" Height="720"
         MinWidth="760" MinHeight="480"
-        Title="Куточок">
+        Title="Kutochok">
 
     <Grid ColumnDefinitions="220,*">
 
@@ -20,8 +20,8 @@
             <Grid Margin="14,18,14,14" RowDefinitions="Auto,*,Auto">
 
                 <StackPanel Grid.Row="0" Margin="4,0,0,16">
-                    <TextBlock Text="Куточок" FontWeight="SemiBold" FontSize="15" />
-                    <TextBlock Text="усе своє під рукою" Classes="faint" />
+                    <TextBlock Text="Kutochok" FontWeight="SemiBold" FontSize="15" />
+                    <TextBlock Text="everything of yours in one place" Classes="faint" />
                 </StackPanel>
 
                 <ItemsControl Grid.Row="1" ItemsSource="{Binding Sections}" VerticalAlignment="Top">
@@ -43,13 +43,13 @@
 
                 <!-- Шлях до файлів — унизу, щоб завжди було видно, де вони -->
                 <StackPanel Grid.Row="2" Margin="4,16,0,0" Spacing="6">
-                    <TextBlock Text="Файли лежать тут:" Classes="faint" />
+                    <TextBlock Text="Files live here:" Classes="faint" />
                     <TextBlock Text="{Binding ContentRoot}"
                                Classes="faint"
                                FontFamily="{StaticResource MonoFont}"
                                FontSize="10"
                                TextWrapping="Wrap" />
-                    <Button Content="Відкрити теку"
+                    <Button Content="Open folder"
                             Click="OnOpenFolder"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Center"

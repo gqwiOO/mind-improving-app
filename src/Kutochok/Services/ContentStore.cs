@@ -61,7 +61,7 @@ public sealed class ContentStore
                     Id = id,
                     Data = new Dictionary<string, object?>(StringComparer.Ordinal)
                     {
-                        ["title"] = $"⚠ {id} — не вдалося прочитати",
+                        ["title"] = $"⚠ {id} — could not be read",
                     },
                     Body = ex.Message,
                 });
@@ -159,7 +159,7 @@ public sealed class ContentStore
 
         if (!string.IsNullOrEmpty(requested) && !Slug.IsValidId(requested))
         {
-            throw new InvalidOperationException("Адреса може містити лише літери, цифри, дефіс і підкреслення");
+            throw new InvalidOperationException("File name may contain only letters, digits, hyphen and underscore");
         }
 
         var id = Slug.MakeUnique(requested, taken);
@@ -186,14 +186,14 @@ public sealed class ContentStore
         if (collection.Kind == StorageKind.Markdown)
         {
             var file = MarkdownFile(collection, id);
-            if (!File.Exists(file)) throw new FileNotFoundException($"Запис «{id}» не знайдено");
+            if (!File.Exists(file)) throw new FileNotFoundException($"Entry «{id}» not found");
             File.Delete(file);
             return;
         }
 
         var all = ReadYamlFile(collection);
         var remaining = all.Where(e => !string.Equals(e.Id, id, StringComparison.Ordinal)).ToList();
-        if (remaining.Count == all.Count) throw new InvalidOperationException($"Запис «{id}» не знайдено");
+        if (remaining.Count == all.Count) throw new InvalidOperationException($"Entry «{id}» not found");
         WriteYamlList(collection, remaining);
     }
 
@@ -201,7 +201,7 @@ public sealed class ContentStore
 
     private static string MarkdownFile(CollectionDef collection, string id)
     {
-        if (!Slug.IsValidId(id)) throw new InvalidOperationException($"Недопустимий ідентифікатор: {id}");
+        if (!Slug.IsValidId(id)) throw new InvalidOperationException($"Invalid identifier: {id}");
         return ContentPaths.Resolve(Path.Combine(collection.Path, id + ".md"));
     }
 
@@ -282,7 +282,7 @@ public sealed class ContentStore
                 ? !string.IsNullOrWhiteSpace(body)
                 : data.ContainsKey(field.Name);
 
-            if (!filled) throw new InvalidOperationException($"Поле «{field.Label}» обов’язкове");
+            if (!filled) throw new InvalidOperationException($"«{field.Label}» is required");
         }
     }
 

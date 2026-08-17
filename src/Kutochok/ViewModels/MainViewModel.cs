@@ -59,6 +59,12 @@ public partial class MainViewModel : ViewModelBase
         CurrentPage = new EditorPageViewModel(this, collection, entry, initialStatus);
     }
 
+    /// <summary>Читання запису на все вікно — те, що відкривається по ЛКМ.</summary>
+    public void ShowReader(CollectionDef collection, Entry entry)
+    {
+        CurrentPage = new ReaderPageViewModel(this, collection, entry);
+    }
+
     public void RefreshCounts()
     {
         foreach (var section in Sections)
