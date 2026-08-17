@@ -8,9 +8,10 @@
 
 backend:
   name: github
-  repo: ЗАМІНИ/НА-СВІЙ-РЕПОЗИТОРІЙ # напр. ivan/blog
+  repo: gqwiOO/mind-improving-app
   branch: main
-  # PKCE — авторизація без власного сервера. app_id береться з GitHub OAuth App.
+  # PKCE — авторизація без власного сервера.
+  # app_id — це Client ID з GitHub OAuth App, лишилося створити його й вписати.
   auth_type: pkce
   app_id: ЗАМІНИ-НА-CLIENT-ID
 

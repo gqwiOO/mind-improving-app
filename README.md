@@ -54,13 +54,14 @@ npm run dev      # сайт: http://localhost:4321
 телефона, зміни їдуть комітами в GitHub. **Він поки не працює** — потрібні
 репозиторій і хостинг. Щоб увімкнути:
 
-1. Заливаєш проєкт у репозиторій на GitHub.
-2. Публікуєш сайт (Cloudflare Pages / Netlify / GitHub Pages).
-3. Створюєш GitHub OAuth App: *Settings → Developer settings → OAuth Apps →
+1. ~~Залити проєкт у репозиторій на GitHub~~ — зроблено:
+   [gqwiOO/mind-improving-app](https://github.com/gqwiOO/mind-improving-app).
+2. Опублікувати сайт (Cloudflare Pages / Netlify / GitHub Pages).
+3. Створити GitHub OAuth App: *Settings → Developer settings → OAuth Apps →
    New*. Callback URL — `https://твій-домен/cms/`.
-4. У `public/cms/config.yml` вписуєш свій `repo` і `app_id` (це Client ID з
-   попереднього кроку) замість заглушок.
-5. Відкриваєш `https://твій-домен/cms/`.
+4. Вписати отриманий Client ID у `app_id` в `public/cms/config.yml`
+   (`repo` там уже заповнено).
+5. Відкрити `https://твій-домен/cms/`.
 
 Авторизація йде через PKCE, тому власний сервер не потрібен.
 
