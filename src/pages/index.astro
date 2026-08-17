@@ -1,0 +1,80 @@
+---
+import EntryList from '~/components/EntryList.astro';
+import Base from '~/layouts/Base.astro';
+import { getPosts, getReadingNow, getTils } from '~/lib/content';
+import { formatShort, isoDate } from '~/lib/utils';
+import { site } from '~/site';
+
+const posts = (await getPosts()).slice(0, 5);
+const tils = (await getTils()).slice(0, 3);
+const reading = await getReadingNow();
+---
+
+<Base>
+  <section class="intro">
+    {site.avatar && <img src={site.avatar} alt="" width="64" height="64" />}
+    <div>
+      <h1>{site.title}</h1>
+      <p class="muted" style="margin:0">{site.tagline}</p>
+    </div>
+  </section>
+
+  {
+    reading.length > 0 && (
+      <section class="now-reading">
+        <h2>Зараз читаю</h2>
+        <ul class="plain-list">
+          {reading.map((book) => (
+            <li>
+              {book.data.url ? (
+                <a href={book.data.url} rel="noopener" target="_blank">
+                  {book.data.title}
+                </a>
+              ) : (
+                book.data.title
+              )}
+              {book.data.note && <span class="muted small"> — {book.data.note}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <div class="section-head">
+    <h2>Останні пости</h2>
+    <a href="/writing">усі пости →</a>
+  </div>
+  <EntryList
+    items={posts.map((post) => ({
+      href: `/writing/${post.id}`,
+      title: post.data.title,
+      date: post.data.date,
+    }))}
+  />
+
+  {
+    tils.length > 0 && (
+      <>
+        <div class="section-head">
+          <h2>Останнє, що дізнався</h2>
+          <a href="/til">усі замітки →</a>
+        </div>
+        <ul class="plain-list">
+          {tils.map((til) => (
+            <li style="margin-bottom:.6rem">
+              <a href={`/til#${til.id}`}>{til.data.title}</a>{' '}
+              <time class="faint small" datetime={isoDate(til.data.date)}>
+                {formatShort(til.data.date)}
+              </time>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  <p class="small muted" style="margin-top:3rem">
+    Підписатися можна через <a href="/rss.xml">RSS</a>. Або просто заходь коли захочеш.
+  </p>
+</Base>

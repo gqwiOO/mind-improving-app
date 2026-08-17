@@ -1,0 +1,64 @@
+---
+import type { GetStaticPaths } from 'astro';
+import EntryList from '~/components/EntryList.astro';
+import Base from '~/layouts/Base.astro';
+import { getPosts, getTils, tagSlug } from '~/lib/content';
+import { counted } from '~/lib/utils';
+
+interface TaggedItem {
+  href: string;
+  title: string;
+  date: Date;
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const [posts, tils] = await Promise.all([getPosts(), getTils()]);
+
+  const byTag = new Map<string, { label: string; items: TaggedItem[] }>();
+
+  const add = (tag: string, item: TaggedItem) => {
+    const slug = tagSlug(tag);
+    let bucket = byTag.get(slug);
+    if (!bucket) {
+      bucket = { label: tag, items: [] };
+      byTag.set(slug, bucket);
+    }
+    bucket.items.push(item);
+  };
+
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      add(tag, { href: `/writing/${post.id}`, title: post.data.title, date: post.data.date });
+    }
+  }
+  for (const til of tils) {
+    for (const tag of til.data.tags) {
+      add(tag, { href: `/til#${til.id}`, title: `${til.data.title} (TIL)`, date: til.data.date });
+    }
+  }
+
+  return [...byTag.entries()].map(([slug, { label, items }]) => ({
+    params: { tag: slug },
+    props: {
+      label,
+      items: items.sort((a, b) => b.date.getTime() - a.date.getTime()),
+    },
+  }));
+};
+
+interface Props {
+  label: string;
+  items: TaggedItem[];
+}
+
+const { label, items } = Astro.props;
+---
+
+<Base title={`#${label}`} description={`Записи з тегом «${label}».`}>
+  <h1>#{label}</h1>
+  <p class="lede">
+    {counted(items.length, 'запис', 'записи', 'записів')} · <a href="/tags">усі теги</a>
+  </p>
+
+  <EntryList items={items} grouped />
+</Base>

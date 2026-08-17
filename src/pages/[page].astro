@@ -1,0 +1,36 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import { formatFull, isoDate } from '~/lib/utils';
+
+/**
+ * Будь-який markdown-файл у src/content/pages/ стає сторінкою.
+ * about.md → /about, now.md → /now і так далі.
+ */
+export const getStaticPaths: GetStaticPaths = async () => {
+  const pages = await getCollection('pages');
+  return pages.map((entry) => ({ params: { page: entry.id }, props: { entry } }));
+};
+
+interface Props {
+  entry: CollectionEntry<'pages'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<Base title={entry.data.title} description={entry.data.description}>
+  <article>
+    <h1>{entry.data.title}</h1>
+    {
+      entry.data.updated && (
+        <p class="post-meta">
+          Оновлено <time datetime={isoDate(entry.data.updated)}>{formatFull(entry.data.updated)}</time>
+        </p>
+      )
+    }
+    <Content />
+  </article>
+</Base>

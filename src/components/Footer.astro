@@ -1,0 +1,21 @@
+---
+import { footerNav, site, socials } from '~/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <nav aria-label="Додаткова навігація">
+      {footerNav.map((item) => <a href={item.href}>{item.label}</a>)}
+      {
+        socials.map((item) => (
+          <a href={item.href} rel="me noopener" target="_blank">
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+    <p style="margin:0">© {year} {site.author}</p>
+  </div>
+</footer>

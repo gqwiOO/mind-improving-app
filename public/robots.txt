@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /cms/
+
+Sitemap: https://example.com/sitemap-index.xml

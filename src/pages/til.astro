@@ -1,0 +1,68 @@
+---
+import { render } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import { getTils, tagSlug } from '~/lib/content';
+import { formatShort, groupByYear, isoDate } from '~/lib/utils';
+
+const tils = await getTils();
+const byYear = groupByYear(tils, (til) => til.data.date.getUTCFullYear());
+
+// Рендеримо тіло кожної замітки заздалегідь — вони короткі, показуємо повністю
+const rendered = new Map(
+  await Promise.all(
+    tils.map(async (til) => [til.id, (await render(til)).Content] as const),
+  ),
+);
+---
+
+<Base title="TIL" description="Короткі замітки про те, що дізнався.">
+  <h1>TIL</h1>
+  <p class="lede">
+    Today I learned — дрібниці, які не тягнуть на окремий пост, але шкода забути.
+  </p>
+
+  {
+    byYear.map((group) => (
+      <>
+        <h2 class="year-heading">{group.year}</h2>
+        {group.items.map((til) => {
+          const Content = rendered.get(til.id)!;
+          return (
+            <article class="til-item" id={til.id}>
+              <h2>
+                <a href={`#${til.id}`} style="text-decoration:none;color:inherit">
+                  {til.data.title}
+                </a>
+              </h2>
+              <p class="faint small" style="margin:0 0 .5rem">
+                <time datetime={isoDate(til.data.date)}>{formatShort(til.data.date)}</time>
+                {til.data.source && (
+                  <>
+                    {' · '}
+                    <a href={til.data.source} rel="noopener" target="_blank">
+                      джерело
+                    </a>
+                  </>
+                )}
+              </p>
+              <div class="body">
+                <Content />
+              </div>
+              {til.data.tags.length > 0 && (
+                <ul class="tag-row" style="margin:.6rem 0 0">
+                  {til.data.tags.map((tag) => (
+                    <li>
+                      <a class="tag" href={`/tags/${tagSlug(tag)}`}>
+                        {tag}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </article>
+          );
+        })}
+      </>
+    ))
+  }
+</Base>

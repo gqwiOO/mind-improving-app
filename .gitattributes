@@ -1,0 +1,12 @@
+# У репозиторії тримаємо LF, щоб файли виглядали однаково на Windows і Mac.
+* text=auto eol=lf
+
+# Бінарники не чіпаємо
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary

@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+
+const all = await getCollection('links');
+
+const groups = [...new Set(all.map((link) => link.data.group))]
+  .sort((a, b) => a.localeCompare(b, 'uk'))
+  .map((group) => ({
+    group,
+    items: all
+      .filter((link) => link.data.group === group)
+      .sort((a, b) => a.data.title.localeCompare(b.data.title, 'uk')),
+  }));
+
+const hostOf = (url: string) => new URL(url).hostname.replace(/^www\./, '');
+---
+
+<Base title="Посилання" description="Блоги й сайти, які варто читати.">
+  <h1>Посилання</h1>
+  <p class="lede">Блоги, сайти й інструменти, які мені подобаються.</p>
+
+  {
+    groups.map(({ group, items }) => (
+      <>
+        <h2 class="year-heading">{group}</h2>
+        <ul class="card-list">
+          {items.map((link) => (
+            <li>
+              <a class="card-title" href={link.data.url} rel="noopener" target="_blank">
+                {link.data.title}
+              </a>
+              <span class="faint small"> {hostOf(link.data.url)}</span>
+              {link.data.note && <p class="card-desc">{link.data.note}</p>}
+            </li>
+          ))}
+        </ul>
+      </>
+    ))
+  }
+</Base>

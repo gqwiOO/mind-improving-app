@@ -1,0 +1,157 @@
+# Конфігурація веб-редактора (Decap CMS).
+#
+# ЩОБ ЦЕ ЗАПРАЦЮВАЛО, треба заповнити `repo` і `app_id` нижче — див. README,
+# розділ «Редагування з інтернету». Доки вони не заповнені, сторінка /cms/
+# відкриється, але авторизація не пройде.
+#
+# Локальна адмінка (/admin) працює незалежно від цього файлу.
+
+backend:
+  name: github
+  repo: ЗАМІНИ/НА-СВІЙ-РЕПОЗИТОРІЙ # напр. ivan/blog
+  branch: main
+  # PKCE — авторизація без власного сервера. app_id береться з GitHub OAuth App.
+  auth_type: pkce
+  app_id: ЗАМІНИ-НА-CLIENT-ID
+
+# Коміт одразу в гілку. Постав editorial_workflow, якщо хочеш спершу чернетки в PR.
+publish_mode: simple
+
+locale: uk
+
+media_folder: public/uploads
+public_folder: /uploads
+
+# unicode — щоб кириличні заголовки давали читабельні імена файлів.
+# Локальна адмінка транслітерує їх у латиницю; обидва варіанти сумісні.
+slug:
+  encoding: unicode
+  clean_accents: false
+  sanitize_replacement: '-'
+
+collections:
+  # ------------------------------------------------------------ пости
+  - name: posts
+    label: Пости
+    label_singular: пост
+    folder: src/content/posts
+    create: true
+    delete: true
+    format: yaml-frontmatter
+    slug: '{{slug}}'
+    identifier_field: title
+    sortable_fields: [date, title]
+    summary: '{{title}} — {{year}}-{{month}}-{{day}}'
+    fields:
+      - { name: title, label: Заголовок, widget: string }
+      - { name: date, label: Дата, widget: datetime, format: 'YYYY-MM-DD', date_format: 'DD.MM.YYYY', time_format: false, picker_utc: true }
+      - { name: description, label: Опис, widget: text, required: false, hint: 'Одне речення для головної, RSS і пошуку.' }
+      - { name: tags, label: Теги, widget: list, required: false, hint: 'Сторінки тегів створюються самі.' }
+      - { name: draft, label: Чернетка, widget: boolean, required: false, default: false }
+      - { name: body, label: Текст, widget: markdown }
+
+  # -------------------------------------------------------------- TIL
+  - name: til
+    label: TIL
+    label_singular: замітку
+    folder: src/content/til
+    create: true
+    delete: true
+    format: yaml-frontmatter
+    slug: '{{slug}}'
+    identifier_field: title
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Заголовок, widget: string }
+      - { name: date, label: Дата, widget: datetime, format: 'YYYY-MM-DD', date_format: 'DD.MM.YYYY', time_format: false, picker_utc: true }
+      - { name: tags, label: Теги, widget: list, required: false }
+      - { name: source, label: Джерело, widget: string, required: false, pattern: ['^https?://', 'Має починатися з http:// або https://'] }
+      - { name: body, label: Текст, widget: markdown }
+
+  # --------------------------------------------------------- сторінки
+  - name: pages
+    label: Сторінки
+    label_singular: сторінку
+    folder: src/content/pages
+    create: true
+    delete: true
+    format: yaml-frontmatter
+    slug: '{{slug}}'
+    identifier_field: title
+    fields:
+      - { name: title, label: Заголовок, widget: string }
+      - { name: description, label: Опис, widget: text, required: false }
+      - { name: updated, label: Оновлено, widget: datetime, format: 'YYYY-MM-DD', date_format: 'DD.MM.YYYY', time_format: false, picker_utc: true, required: false }
+      - { name: body, label: Текст, widget: markdown }
+
+  # ------------------------------------------------------------ списки
+  # Ці три файли — списки всередині одного файлу, тому вони описані як `files`,
+  # а самі записи редагуються віджетом list.
+  - name: data
+    label: Списки
+    files:
+      - name: books
+        label: Книги
+        file: src/data/books.yaml
+        fields:
+          - name: books
+            label: Книги
+            label_singular: книжку
+            widget: list
+            summary: '{{fields.title}} ({{fields.year}})'
+            fields:
+              - { name: id, label: Ідентифікатор, widget: string, hint: 'Унікальний рядок латиницею.' }
+              - { name: title, label: Назва, widget: string }
+              - name: status
+                label: Статус
+                widget: select
+                default: read
+                options:
+                  - { label: прочитано, value: read }
+                  - { label: читаю зараз, value: reading }
+              - { name: year, label: Рік, widget: number, value_type: int, required: false, min: 1900, max: 2200 }
+              - { name: rating, label: Оцінка, widget: number, value_type: float, required: false, min: 0, max: 5, step: 0.5 }
+              - { name: note, label: Враження, widget: text, required: false }
+              - { name: url, label: Посилання, widget: string, required: false }
+
+      - name: projects
+        label: Проєкти
+        file: src/data/projects.yaml
+        fields:
+          - name: projects
+            label: Проєкти
+            label_singular: проєкт
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { name: id, label: Ідентифікатор, widget: string }
+              - { name: title, label: Назва, widget: string }
+              - { name: description, label: Опис, widget: text }
+              - name: status
+                label: Статус
+                widget: select
+                default: active
+                options:
+                  - { label: в роботі, value: active }
+                  - { label: завершено, value: done }
+                  - { label: на паузі, value: paused }
+              - { name: year, label: Рік, widget: number, value_type: int, required: false }
+              - { name: stack, label: Стек, widget: list, required: false }
+              - { name: url, label: Посилання, widget: string, required: false }
+              - { name: repo, label: Репозиторій, widget: string, required: false }
+
+      - name: links
+        label: Посилання
+        file: src/data/links.yaml
+        fields:
+          - name: links
+            label: Посилання
+            label_singular: посилання
+            widget: list
+            summary: '{{fields.title}}'
+            fields:
+              - { name: id, label: Ідентифікатор, widget: string }
+              - { name: title, label: Назва, widget: string }
+              - { name: url, label: Адреса, widget: string }
+              - { name: group, label: Група, widget: string, default: Інше }
+              - { name: note, label: Нотатка, widget: text, required: false }

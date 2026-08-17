@@ -1,0 +1,24 @@
+---
+import Base from '~/layouts/Base.astro';
+import { getTagCounts, tagSlug } from '~/lib/content';
+import { counted } from '~/lib/utils';
+
+const tags = await getTagCounts();
+---
+
+<Base title="Теги" description="Усі теги постів і заміток.">
+  <h1>Теги</h1>
+  <p class="lede">{counted(tags.length, 'тег', 'теги', 'тегів')} по постах і TIL-замітках.</p>
+
+  <ul class="tag-row">
+    {
+      tags.map(({ tag, count }) => (
+        <li>
+          <a class="tag" href={`/tags/${tagSlug(tag)}`}>
+            {tag} <span class="count">{count}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

@@ -1,0 +1,25 @@
+---
+import EntryList from '~/components/EntryList.astro';
+import Base from '~/layouts/Base.astro';
+import { getPosts } from '~/lib/content';
+import { counted } from '~/lib/utils';
+
+const posts = await getPosts();
+---
+
+<Base title="Блог" description="Усі пости, згруповані по роках.">
+  <h1>Блог</h1>
+  <p class="lede">
+    {counted(posts.length, 'пост', 'пости', 'постів')}. Можна <a href="/search">пошукати</a> або
+    переглянути за <a href="/tags">тегами</a>.
+  </p>
+
+  <EntryList
+    grouped
+    items={posts.map((post) => ({
+      href: `/writing/${post.id}`,
+      title: post.data.title,
+      date: post.data.date,
+    }))}
+  />
+</Base>

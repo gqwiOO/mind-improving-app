@@ -1,0 +1,59 @@
+---
+import Footer from '~/components/Footer.astro';
+import Header from '~/components/Header.astro';
+import { site } from '~/site';
+import '~/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Не індексувати (чернетки, службові сторінки) */
+  noindex?: boolean;
+}
+
+const { title, description = site.description, noindex = false } = Astro.props;
+const pageTitle = title ? `${title} — ${site.title}` : site.title;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+
+    <link rel="alternate" type="application/rss+xml" title={site.title} href="/rss.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    {/* Ставимо тему до першого кадру, щоб не блимало */}
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') {
+          document.documentElement.dataset.theme = saved;
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Перейти до вмісту</a>
+    <Header />
+    <main id="main">
+      <div class="wrap">
+        <slot />
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

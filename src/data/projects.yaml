@@ -1,0 +1,21 @@
+# Проєкти. Порядок у файлі не важливий — сортується за роком.
+#   status: active | done | paused
+
+projects:
+  - id: cej-sajt
+    title: Цей сайт
+    description: >-
+      Персональний сайт на Astro: пости, книги, замітки. Без бази даних, без
+      аналітики, без залежності від чужої платформи.
+    year: 2026
+    stack: [ Astro, TypeScript, CSS ]
+    status: active
+
+  - id: pryklad
+    title: Приклад проєкту
+    description: >-
+      Заміни цей блок на щось своє або видали. Поля url і repo необов'язкові —
+      без них просто не буде посилань.
+    year: 2025
+    stack: [ Unity, C# ]
+    status: paused

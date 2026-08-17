@@ -1,0 +1,62 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import { getPosts, tagSlug, type Post } from '~/lib/content';
+import { excerpt, formatFull, isoDate, readingTime } from '~/lib/utils';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getPosts();
+  return posts.map((post, index) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      // posts відсортовані від нових до старих
+      newer: posts[index - 1] ?? null,
+      older: posts[index + 1] ?? null,
+    },
+  }));
+};
+
+interface Props {
+  post: Post;
+  newer: Post | null;
+  older: Post | null;
+}
+
+const { post, newer, older } = Astro.props;
+const { Content } = await render(post);
+const description = post.data.description ?? excerpt(post.body);
+---
+
+<Base title={post.data.title} description={description} noindex={post.data.draft}>
+  <article>
+    <h1>{post.data.title}</h1>
+    <p class="post-meta">
+      <time datetime={isoDate(post.data.date)}>{formatFull(post.data.date)}</time>
+      {` · ${readingTime(post.body)}`}
+      {post.data.draft && <> · <strong>чернетка</strong></>}
+    </p>
+
+    <Content />
+
+    {
+      post.data.tags.length > 0 && (
+        <ul class="tag-row" style="margin-top:2rem">
+          {post.data.tags.map((tag) => (
+            <li>
+              <a class="tag" href={`/tags/${tagSlug(tag)}`}>
+                {tag}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </article>
+
+  <nav class="post-nav">
+    <span>{older && <a href={`/writing/${older.id}`}>← {older.data.title}</a>}</span>
+    <span>{newer && <a href={`/writing/${newer.id}`}>{newer.data.title} →</a>}</span>
+  </nav>
+</Base>

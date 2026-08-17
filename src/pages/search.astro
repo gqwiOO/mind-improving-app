@@ -1,0 +1,131 @@
+---
+import Base from '~/layouts/Base.astro';
+import { getPosts, getTils } from '~/lib/content';
+import { excerpt, formatShort } from '~/lib/utils';
+
+const [posts, tils] = await Promise.all([getPosts(), getTils()]);
+
+/** Індекс вантажиться разом зі сторінкою — на масштабах особистого блогу це копійки */
+const index = [
+  ...posts.map((post) => ({
+    kind: 'Пост',
+    title: post.data.title,
+    href: `/writing/${post.id}`,
+    date: formatShort(post.data.date),
+    text: post.data.description ?? excerpt(post.body, 220),
+    tags: post.data.tags,
+  })),
+  ...tils.map((til) => ({
+    kind: 'TIL',
+    title: til.data.title,
+    href: `/til#${til.id}`,
+    date: formatShort(til.data.date),
+    text: excerpt(til.body, 220),
+    tags: til.data.tags,
+  })),
+];
+
+// Екрануємо `<`, щоб текст із розмітки не закрив тег <script> завчасно
+const indexJson = JSON.stringify(index).replace(/</g, '\\u003c');
+---
+
+<Base title="Пошук" description="Пошук по постах і замітках." noindex>
+  <h1>Пошук</h1>
+  <p class="lede">По заголовках, тексту й тегах. Працює прямо в браузері, без сервера.</p>
+
+  <label class="skip-link" for="q">Пошуковий запит</label>
+  <input
+    id="q"
+    class="search-input"
+    type="search"
+    placeholder="Що шукаємо?"
+    autocomplete="off"
+    autofocus
+  />
+
+  <p id="search-status" class="muted small" aria-live="polite"></p>
+  <div id="search-results"></div>
+
+  <script id="search-index" type="application/json" set:html={indexJson} is:inline></script>
+
+  <script>
+    interface Doc {
+      kind: string;
+      title: string;
+      href: string;
+      date: string;
+      text: string;
+      tags: string[];
+    }
+
+    const raw = document.getElementById('search-index')?.textContent ?? '[]';
+    const docs: Doc[] = JSON.parse(raw);
+
+    const input = document.getElementById('q') as HTMLInputElement;
+    const status = document.getElementById('search-status')!;
+    const results = document.getElementById('search-results')!;
+
+    const norm = (value: string) => value.toLowerCase().replace(/['’ʼ]/g, '');
+
+    const haystacks = docs.map((doc) => norm([doc.title, doc.text, doc.tags.join(' ')].join(' ')));
+
+    function highlight(text: string, query: string): string {
+      const escaped = text.replace(
+        /[&<>"']/g,
+        (char) =>
+          ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!,
+      );
+      if (!query) return escaped;
+      const pattern = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return escaped.replace(new RegExp(pattern, 'gi'), (match) => `<mark>${match}</mark>`);
+    }
+
+    /** «1 запис / 2 записи / 5 записів» */
+    function records(count: number): string {
+      const tail = count % 10;
+      const teen = count % 100 >= 11 && count % 100 <= 14;
+      const word = teen || tail === 0 || tail >= 5 ? 'записів' : tail === 1 ? 'запис' : 'записи';
+      return `${count} ${word}`;
+    }
+
+    function render(query: string) {
+      const needle = norm(query.trim());
+
+      if (!needle) {
+        results.innerHTML = '';
+        status.textContent = `${records(docs.length)} у покажчику.`;
+        return;
+      }
+
+      const hits = docs.filter((_, i) => haystacks[i]!.includes(needle));
+
+      status.textContent = hits.length
+        ? `Знайшлося ${records(hits.length)}`
+        : 'Нічого не знайшлося. Спробуй інше слово.';
+
+      results.innerHTML = hits
+        .map(
+          (doc) => `
+            <article class="search-result">
+              <span class="kind">${doc.kind} · ${doc.date}</span><br />
+              <a href="${doc.href}">${highlight(doc.title, query.trim())}</a>
+              <p>${highlight(doc.text, query.trim())}</p>
+            </article>`,
+        )
+        .join('');
+    }
+
+    input.addEventListener('input', () => {
+      render(input.value);
+      const url = new URL(location.href);
+      if (input.value) url.searchParams.set('q', input.value);
+      else url.searchParams.delete('q');
+      history.replaceState(null, '', url);
+    });
+
+    // Підхоплюємо ?q= з адреси, щоб можна було ділитися посиланням на пошук
+    const initial = new URL(location.href).searchParams.get('q') ?? '';
+    input.value = initial;
+    render(initial);
+  </script>
+</Base>

@@ -1,0 +1,27 @@
+# Blogroll і корисні посилання.
+# `group` — довільний рядок, сторінка сама згрупує за ним.
+
+links:
+  - id: maxua
+    title: maxua.com
+    url: https://maxua.com/
+    group: Блоги
+    note: Сайт, з якого почалася ідея цього.
+
+  - id: nownownow
+    title: nownownow.com
+    url: https://nownownow.com/
+    group: Блоги
+    note: Каталог особистих /now-сторінок. Гарний спосіб знайти живі сайти.
+
+  - id: astro-docs
+    title: Astro Docs
+    url: https://docs.astro.build/
+    group: Інструменти
+    note: Документація движка, на якому працює цей сайт.
+
+  - id: mdn
+    title: MDN Web Docs
+    url: https://developer.mozilla.org/
+    group: Інструменти
+    note: Досі найкраща довідка по вебу.

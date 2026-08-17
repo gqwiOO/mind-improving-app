@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+
+const STATUS_LABEL = {
+  active: 'в роботі',
+  done: 'завершено',
+  paused: 'на паузі',
+} as const;
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => (b.data.year ?? 0) - (a.data.year ?? 0),
+);
+---
+
+<Base title="Проєкти" description="Те, що зробив або роблю зараз.">
+  <h1>Проєкти</h1>
+  <p class="lede">Те, що зробив або роблю зараз.</p>
+
+  <ul class="card-list">
+    {
+      projects.map((project) => (
+        <li>
+          <div>
+            {project.data.url ? (
+              <a class="card-title" href={project.data.url} rel="noopener" target="_blank">
+                {project.data.title}
+              </a>
+            ) : (
+              <span class="card-title">{project.data.title}</span>
+            )}
+            <span class="faint small">
+              {project.data.year && ` · ${project.data.year}`}
+              {` · ${STATUS_LABEL[project.data.status]}`}
+            </span>
+          </div>
+          <p class="card-desc">{project.data.description}</p>
+          <div class="chip-row">
+            {project.data.stack.map((tech) => (
+              <span class="chip">{tech}</span>
+            ))}
+            {project.data.repo && (
+              <a href={project.data.repo} rel="noopener" target="_blank">
+                код
+              </a>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

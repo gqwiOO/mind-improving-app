@@ -1,0 +1,37 @@
+---
+import { formatShort, groupByYear, isoDate } from '~/lib/utils';
+
+interface Item {
+  href: string;
+  title: string;
+  date: Date;
+}
+
+interface Props {
+  items: Item[];
+  /** Показати заголовки років між групами */
+  grouped?: boolean;
+}
+
+const { items, grouped = false } = Astro.props;
+
+const groups = grouped
+  ? groupByYear(items, (item) => item.date.getUTCFullYear())
+  : [{ year: 0, items }];
+---
+
+{
+  groups.map((group) => (
+    <>
+      {grouped && <h2 class="year-heading">{group.year}</h2>}
+      <ul class="entry-list">
+        {group.items.map((item) => (
+          <li>
+            <time datetime={isoDate(item.date)}>{formatShort(item.date)}</time>
+            <a href={item.href}>{item.title}</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  ))
+}

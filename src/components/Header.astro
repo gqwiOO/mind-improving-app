@@ -1,0 +1,46 @@
+---
+import { nav, site } from '~/site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(href + '/');
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <nav class="site-nav" aria-label="Основна навігація">
+      {
+        nav.map((item) => (
+          <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+    <button
+      class="theme-toggle"
+      type="button"
+      data-theme-toggle
+      aria-label="Перемкнути тему"
+      title={`Тема — ${site.title}`}>тема</button
+    >
+  </div>
+</header>
+
+<script>
+  const KEY = 'theme';
+  const root = document.documentElement;
+
+  function apply(theme: string | null) {
+    if (theme === 'dark' || theme === 'light') root.dataset.theme = theme;
+    else delete root.dataset.theme;
+  }
+
+  document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+    const systemDark = matchMedia('(prefers-color-scheme: dark)').matches;
+    const current = root.dataset.theme ?? (systemDark ? 'dark' : 'light');
+    const next = current === 'dark' ? 'light' : 'dark';
+    localStorage.setItem(KEY, next);
+    apply(next);
+  });
+</script>

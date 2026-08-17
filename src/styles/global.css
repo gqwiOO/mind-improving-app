@@ -1,0 +1,706 @@
+/* ---------- Токени теми ---------- */
+:root {
+  --bg: #fdfdfc;
+  --bg-soft: #f4f4f1;
+  --text: #1c1b19;
+  --text-muted: #6b6862;
+  --text-faint: #97938c;
+  --link: #1a5fb4;
+  --link-hover: #0d3d7a;
+  --border: #e2e0da;
+  --accent: #b5651d;
+
+  --font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+
+  --measure: 40rem;
+  --radius: 6px;
+}
+
+:root:not([data-theme='light']) {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #16161a;
+    --bg-soft: #1f1f24;
+    --text: #e6e4e0;
+    --text-muted: #a09d97;
+    --text-faint: #6f6c67;
+    --link: #7cb0ec;
+    --link-hover: #a6cbf5;
+    --border: #2e2e35;
+    --accent: #dd9a5e;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #16161a;
+  --bg-soft: #1f1f24;
+  --text: #e6e4e0;
+  --text-muted: #a09d97;
+  --text-faint: #6f6c67;
+  --link: #7cb0ec;
+  --link-hover: #a6cbf5;
+  --border: #2e2e35;
+  --accent: #dd9a5e;
+  color-scheme: dark;
+}
+
+/* ---------- База ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+main {
+  padding-bottom: 4rem;
+}
+
+a {
+  color: var(--link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.25;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin: 2rem 0 0.75rem;
+}
+
+h1 {
+  font-size: 1.7rem;
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 1.3rem;
+}
+
+h3 {
+  font-size: 1.1rem;
+}
+
+p,
+ul,
+ol,
+blockquote,
+pre,
+table {
+  margin: 0 0 1.1rem;
+}
+
+ul,
+ol {
+  padding-left: 1.4rem;
+}
+
+li {
+  margin-bottom: 0.35rem;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+blockquote {
+  margin-left: 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--border);
+  color: var(--text-muted);
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--bg-soft);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+}
+
+pre {
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  border: 1px solid var(--border);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+/* Тема коду з shiki: перемикаємо разом із сайтом */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .astro-code,
+  :root:not([data-theme='light']) .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+:root[data-theme='dark'] .astro-code,
+:root[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+input,
+button,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* ---------- Утиліти ---------- */
+.muted {
+  color: var(--text-muted);
+}
+
+.faint {
+  color: var(--text-faint);
+}
+
+.small {
+  font-size: 0.9rem;
+}
+
+.lede {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.plain-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Посилання у списках підкреслюємо тільки на наведення — як у .entry-list */
+.plain-list a,
+.now-reading a,
+.card-list .card-title,
+.book-list .book-title {
+  text-decoration: none;
+}
+
+.plain-list a:hover,
+.now-reading a:hover,
+.card-list a.card-title:hover,
+.book-list a.book-title:hover {
+  text-decoration: underline;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+}
+
+.skip-link:focus {
+  left: 1rem;
+  top: 0.5rem;
+  background: var(--bg);
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  z-index: 10;
+}
+
+/* ---------- Шапка ---------- */
+.site-header {
+  padding: 1.75rem 0 1.5rem;
+}
+
+.site-header .bar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  font-size: 0.95rem;
+}
+
+.site-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.site-nav a[aria-current='page'] {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--text-faint);
+}
+
+/* ---------- Футер ---------- */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 0 3rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.site-footer a {
+  color: var(--text-muted);
+}
+
+/* ---------- Список записів (пости, TIL) ---------- */
+.entry-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+}
+
+.entry-list > li {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.3rem 0;
+  margin: 0;
+}
+
+.entry-list time {
+  flex: 0 0 4.25rem;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.entry-list a {
+  text-decoration: none;
+}
+
+.entry-list a:hover {
+  text-decoration: underline;
+}
+
+.year-heading {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  margin: 2rem 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.year-heading:first-of-type {
+  margin-top: 0;
+}
+
+/* ---------- Пост ---------- */
+.post-meta {
+  color: var(--text-faint);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+  margin-top: 3rem;
+  font-size: 0.9rem;
+}
+
+/* ---------- Теги ---------- */
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0;
+  list-style: none;
+  margin: 0 0 1.5rem;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  text-decoration: none;
+  background: var(--bg-soft);
+}
+
+.tag:hover {
+  color: var(--text);
+  border-color: var(--text-faint);
+}
+
+.tag .count {
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Книги ---------- */
+.book-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+}
+
+.book-list > li {
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+}
+
+.book-list > li:last-child {
+  border-bottom: 0;
+}
+
+.book-title {
+  font-weight: 550;
+}
+
+.rating {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  margin-left: 0.4rem;
+}
+
+.book-note {
+  color: var(--text-muted);
+  font-size: 0.93rem;
+  margin: 0.2rem 0 0;
+}
+
+.now-reading {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  margin-bottom: 2rem;
+}
+
+.now-reading h2 {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ---------- Статистика читання ---------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.stat {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.85rem;
+}
+
+.stat .value {
+  font-size: 1.5rem;
+  font-weight: 650;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat .label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.chart {
+  display: grid;
+  gap: 0.3rem;
+  margin-bottom: 2.5rem;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.chart-row .year {
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-row .bar {
+  height: 1.1rem;
+  min-width: 1.6rem;
+  background: var(--accent);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.35rem;
+  color: var(--bg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Картки (проєкти, посилання) ---------- */
+.card-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+}
+
+.card-list > li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+}
+
+.card-list > li:last-child {
+  border-bottom: 0;
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+.card-desc {
+  color: var(--text-muted);
+  font-size: 0.93rem;
+  margin: 0.2rem 0 0.35rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+.chip {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 0.35rem;
+}
+
+/* ---------- TIL ---------- */
+.til-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.til-item:last-child {
+  border-bottom: 0;
+}
+
+.til-item h2 {
+  margin: 0 0 0.15rem;
+  font-size: 1.05rem;
+}
+
+.til-item .body > :last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- Пошук ---------- */
+.search-input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  margin-bottom: 1.25rem;
+}
+
+.search-input::placeholder {
+  color: var(--text-faint);
+}
+
+.search-result {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.search-result .kind {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+.search-result p {
+  margin: 0.15rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+mark {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: inherit;
+  border-radius: 2px;
+}
+
+/* ---------- Головна ---------- */
+.intro {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.intro img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--bg-soft);
+}
+
+.intro h1 {
+  margin: 0 0 0.15rem;
+  font-size: 1.35rem;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 2.5rem 0 0.75rem;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.section-head a {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 30rem) {
+  body {
+    font-size: 16px;
+  }
+
+  .entry-list > li {
+    flex-direction: column;
+    gap: 0;
+    padding: 0.4rem 0;
+  }
+
+  .entry-list time {
+    flex: none;
+  }
+}
+
+@media print {
+  .site-nav,
+  .site-footer,
+  .theme-toggle {
+    display: none;
+  }
+}

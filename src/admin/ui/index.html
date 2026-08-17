@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Адмінка</title>
+    <link rel="stylesheet" href="/__admin/ui.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <h1>Адмінка</h1>
+        <p class="sub">локальне редагування</p>
+        <nav id="nav" aria-label="Розділи"></nav>
+        <div class="foot">
+          <p>
+            Зміни пишуться прямо у файли проєкту.<br />
+            Сайт: <a href="/" target="_blank">переглянути →</a>
+          </p>
+          <p>Ця сторінка працює тільки при <code>npm run dev</code> і не потрапляє у зібраний сайт.</p>
+        </div>
+      </aside>
+
+      <main class="main" id="main">
+        <p class="hint">Завантаження…</p>
+      </main>
+    </div>
+
+    <dialog id="confirm">
+      <h3>Видалити назавжди?</h3>
+      <p id="confirm-text"></p>
+      <div class="row-btns">
+        <button class="btn" value="cancel" id="confirm-no">Скасувати</button>
+        <button class="btn danger" value="ok" id="confirm-yes">Видалити</button>
+      </div>
+    </dialog>
+
+    <script type="module" src="/__admin/ui.js"></script>
+  </body>
+</html>

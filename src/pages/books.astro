@@ -1,0 +1,134 @@
+---
+import Base from '~/layouts/Base.astro';
+import { getReadBooks, getReadingNow } from '~/lib/content';
+import { groupByYear, stars } from '~/lib/utils';
+
+const books = await getReadBooks();
+const reading = await getReadingNow();
+
+const byYear = groupByYear(books, (book) => book.data.year ?? 0);
+
+// --- Статистика ---
+const rated = books.filter((book) => typeof book.data.rating === 'number');
+const avgRating = rated.length
+  ? rated.reduce((sum, book) => sum + book.data.rating!, 0) / rated.length
+  : 0;
+const maxPerYear = Math.max(1, ...byYear.map((group) => group.items.length));
+const thisYear = new Date().getFullYear();
+const thisYearCount = byYear.find((group) => group.year === thisYear)?.items.length ?? 0;
+const perYearAvg = byYear.length ? books.length / byYear.length : 0;
+const favourites = books
+  .filter((book) => (book.data.rating ?? 0) >= 4.5)
+  .slice()
+  .sort((a, b) => (b.data.rating ?? 0) - (a.data.rating ?? 0));
+---
+
+<Base title="Книги" description="Що прочитав, з оцінками і короткими враженнями.">
+  <h1>Книги</h1>
+  <p class="lede">Що прочитав, з оцінкою і кількома реченнями враження.</p>
+
+  {
+    reading.length > 0 && (
+      <section class="now-reading">
+        <h2>Зараз читаю</h2>
+        <ul class="plain-list">
+          {reading.map((book) => (
+            <li>
+              {book.data.url ? (
+                <a href={book.data.url} rel="noopener" target="_blank">
+                  {book.data.title}
+                </a>
+              ) : (
+                book.data.title
+              )}
+              {book.data.note && <span class="muted small"> — {book.data.note}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <h2 id="stats">Статистика</h2>
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="value">{books.length}</div>
+      <div class="label">книг усього</div>
+    </div>
+    <div class="stat">
+      <div class="value">{thisYearCount}</div>
+      <div class="label">у {thisYear} році</div>
+    </div>
+    <div class="stat">
+      <div class="value">{perYearAvg.toFixed(1)}</div>
+      <div class="label">у середньому за рік</div>
+    </div>
+    <div class="stat">
+      <div class="value">{avgRating ? avgRating.toFixed(2) : '—'}</div>
+      <div class="label">середня оцінка</div>
+    </div>
+  </div>
+
+  <div class="chart" role="img" aria-label="Кількість прочитаних книг за роками">
+    {
+      byYear.map((group) => (
+        <div class="chart-row">
+          <span class="year">{group.year || '?'}</span>
+          <span class="bar" style={`width:${(group.items.length / maxPerYear) * 100}%`}>
+            {group.items.length}
+          </span>
+        </div>
+      ))
+    }
+  </div>
+
+  {
+    favourites.length > 0 && (
+      <>
+        <h2>Найкраще</h2>
+        <p class="muted small">Усе, що отримало 4.5 і вище.</p>
+        <ul class="plain-list" style="margin-bottom:2rem">
+          {favourites.map((book) => (
+            <li>
+              <span class="book-title">{book.data.title}</span>
+              <span class="rating">{stars(book.data.rating!)}</span>
+              <span class="faint small"> {book.data.year}</span>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  <h2>Усе прочитане</h2>
+  {
+    byYear.map((group) => (
+      <>
+        <h3 class="year-heading">
+          {group.year || 'Без року'} · {group.items.length}
+        </h3>
+        <ul class="book-list">
+          {group.items.map((book) => (
+            <li>
+              <div>
+                {book.data.url ? (
+                  <a class="book-title" href={book.data.url} rel="noopener" target="_blank">
+                    {book.data.title}
+                  </a>
+                ) : (
+                  <span class="book-title">{book.data.title}</span>
+                )}
+                {typeof book.data.rating === 'number' && (
+                  <span class="rating" title={`${book.data.rating} з 5`}>
+                    {stars(book.data.rating)} {book.data.rating}/5
+                  </span>
+                )}
+              </div>
+              {book.data.note && <p class="book-note">{book.data.note}</p>}
+            </li>
+          ))}
+        </ul>
+      </>
+    ))
+  }
+</Base>
