@@ -1,0 +1,172 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Kutochok.ViewModels"
+             xmlns:conv="using:Kutochok.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="820" d:DesignHeight="640"
+             x:Class="Kutochok.Views.ListPageView"
+             x:DataType="vm:ListPageViewModel">
+
+    <DockPanel Margin="24,20,24,0">
+
+        <!-- ===================== Шапка розділу ===================== -->
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,4">
+            <TextBlock Grid.Column="0" Text="{Binding Title}" Classes="h1" VerticalAlignment="Center" />
+            <Button Grid.Column="1" Classes="primary" Content="{Binding AddLabel}" Click="OnAdd" />
+        </Grid>
+
+        <TextBlock DockPanel.Dock="Top"
+                   Text="{Binding Hint}"
+                   Classes="faint"
+                   IsVisible="{Binding HasHint}"
+                   Margin="0,0,0,12" />
+
+        <TextBox DockPanel.Dock="Top"
+                 Text="{Binding Search}"
+                 PlaceholderText="Пошук по всьому розділу…"
+                 Margin="0,0,0,10" />
+
+        <!-- ===================== Фільтр за тегами ===================== -->
+        <ItemsControl DockPanel.Dock="Top"
+                      ItemsSource="{Binding Tags}"
+                      Margin="0,0,0,10"
+                      IsVisible="{Binding HasTagFilter}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:TagChipViewModel">
+                    <Button Click="OnTagClick"
+                            Tag="{Binding Name}"
+                            Content="{Binding Name}"
+                            Classes.chosen="{Binding IsActive}"
+                            Classes="chip"
+                            FontSize="12"
+                            Padding="9,2"
+                            CornerRadius="10"
+                            Margin="0,0,5,5" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="0" Margin="0,0,14,24">
+
+                <!-- ===================== Статистика читання ===================== -->
+                <StackPanel IsVisible="{Binding ShowStats}" Margin="0,0,0,18" Spacing="12">
+
+                    <UniformGrid Columns="4">
+                        <Border Classes="stat">
+                            <StackPanel>
+                                <TextBlock Text="{Binding StatTotal}" Classes="statValue" />
+                                <TextBlock Text="книг усього" Classes="faint" />
+                            </StackPanel>
+                        </Border>
+                        <Border Classes="stat">
+                            <StackPanel>
+                                <TextBlock Text="{Binding StatThisYear}" Classes="statValue" />
+                                <TextBlock Text="цього року" Classes="faint" />
+                            </StackPanel>
+                        </Border>
+                        <Border Classes="stat">
+                            <StackPanel>
+                                <TextBlock Text="{Binding StatPerYear}" Classes="statValue" />
+                                <TextBlock Text="у середньому за рік" Classes="faint" />
+                            </StackPanel>
+                        </Border>
+                        <Border Classes="stat">
+                            <StackPanel>
+                                <TextBlock Text="{Binding StatRating}" Classes="statValue" />
+                                <TextBlock Text="середня оцінка" Classes="faint" />
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <ItemsControl ItemsSource="{Binding YearBars}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:YearBarViewModel">
+                                <Grid ColumnDefinitions="44,*" Margin="0,0,0,4">
+                                    <TextBlock Grid.Column="0" Text="{Binding Year}" Classes="faint"
+                                               VerticalAlignment="Center" />
+                                    <Grid Grid.Column="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="{Binding Fraction, Converter={x:Static conv:FractionConverter.Fill}}" />
+                                            <ColumnDefinition Width="{Binding Fraction, Converter={x:Static conv:FractionConverter.Rest}}" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0"
+                                                Background="{DynamicResource AppAccent}"
+                                                CornerRadius="3"
+                                                Height="18"
+                                                MinWidth="26">
+                                            <TextBlock Text="{Binding Count}"
+                                                       Foreground="{DynamicResource AppOnAccent}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,6,0" />
+                                        </Border>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+
+                <!-- ===================== Список записів ===================== -->
+                <TextBlock Text="{Binding EmptyMessage}"
+                           Classes="faint"
+                           IsVisible="{Binding IsEmpty}"
+                           HorizontalAlignment="Center"
+                           Margin="0,40" />
+
+                <ItemsControl ItemsSource="{Binding Rows}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:EntryRowViewModel">
+                            <Button Classes="row"
+                                    Click="OnOpen"
+                                    Tag="{Binding}"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    Padding="12,10"
+                                    Margin="0,0,0,6">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <StackPanel Grid.Column="0" Spacing="2">
+                                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Meta}"
+                                                   Classes="faint"
+                                                   IsVisible="{Binding HasMeta}" />
+                                        <TextBlock Text="{Binding Preview}"
+                                                   Classes="muted"
+                                                   FontSize="12.5"
+                                                   MaxLines="2"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   IsVisible="{Binding HasPreview}"
+                                                   Margin="0,2,0,0" />
+                                    </StackPanel>
+                                    <Border Grid.Column="1"
+                                            IsVisible="{Binding HasBadge}"
+                                            BorderBrush="{DynamicResource AppAccent}"
+                                            BorderThickness="1"
+                                            CornerRadius="10"
+                                            Padding="8,1"
+                                            Height="20"
+                                            VerticalAlignment="Top">
+                                        <TextBlock Text="{Binding Badge}"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource AppAccent}" />
+                                    </Border>
+                                </Grid>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</UserControl>

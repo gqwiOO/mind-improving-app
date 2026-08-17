@@ -1,0 +1,183 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Kutochok.App"
+             xmlns:local="using:Kutochok"
+             RequestedThemeVariant="Default">
+
+    <Application.DataTemplates>
+        <local:ViewLocator />
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="AppBg" Color="#FDFDFC" />
+                    <SolidColorBrush x:Key="AppPanel" Color="#F4F4F1" />
+                    <SolidColorBrush x:Key="AppText" Color="#1C1B19" />
+                    <SolidColorBrush x:Key="AppMuted" Color="#6B6862" />
+                    <SolidColorBrush x:Key="AppFaint" Color="#97938C" />
+                    <SolidColorBrush x:Key="AppBorder" Color="#E2E0DA" />
+                    <SolidColorBrush x:Key="AppAccent" Color="#B5651D" />
+                    <SolidColorBrush x:Key="AppLink" Color="#1A5FB4" />
+                    <SolidColorBrush x:Key="AppDanger" Color="#B3261E" />
+                    <SolidColorBrush x:Key="AppSelection" Color="#E8E5DE" />
+                    <SolidColorBrush x:Key="AppOnAccent" Color="#FFFFFF" />
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="AppBg" Color="#16161A" />
+                    <SolidColorBrush x:Key="AppPanel" Color="#1F1F24" />
+                    <SolidColorBrush x:Key="AppText" Color="#E6E4E0" />
+                    <SolidColorBrush x:Key="AppMuted" Color="#A09D97" />
+                    <SolidColorBrush x:Key="AppFaint" Color="#6F6C67" />
+                    <SolidColorBrush x:Key="AppBorder" Color="#2E2E35" />
+                    <SolidColorBrush x:Key="AppAccent" Color="#DD9A5E" />
+                    <SolidColorBrush x:Key="AppLink" Color="#7CB0EC" />
+                    <SolidColorBrush x:Key="AppDanger" Color="#F2857C" />
+                    <SolidColorBrush x:Key="AppSelection" Color="#2A2A31" />
+                    <SolidColorBrush x:Key="AppOnAccent" Color="#16161A" />
+                </ResourceDictionary>
+
+            </ResourceDictionary.ThemeDictionaries>
+
+            <FontFamily x:Key="MonoFont">Consolas,Menlo,DejaVu Sans Mono,monospace</FontFamily>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <!-- ================= Загальне ================= -->
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{DynamicResource AppBg}" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource AppText}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style Selector="TextBlock.h1">
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="TextBlock.muted">
+            <Setter Property="Foreground" Value="{DynamicResource AppMuted}" />
+        </Style>
+
+        <Style Selector="TextBlock.faint">
+            <Setter Property="Foreground" Value="{DynamicResource AppFaint}" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+
+        <!-- ================= Поля вводу ================= -->
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="{DynamicResource AppBg}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppText}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}" />
+            <Setter Property="CornerRadius" Value="5" />
+            <Setter Property="Padding" Value="8,6" />
+        </Style>
+
+        <Style Selector="TextBox.mono">
+            <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource AppBg}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}" />
+            <Setter Property="CornerRadius" Value="5" />
+            <Setter Property="MinHeight" Value="34" />
+        </Style>
+
+        <!-- ================= Кнопки ================= -->
+        <Style Selector="Button">
+            <Setter Property="Background" Value="{DynamicResource AppPanel}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppText}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="5" />
+            <Setter Property="Padding" Value="12,6" />
+        </Style>
+
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppOnAccent}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppAccent}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style Selector="Button.danger">
+            <Setter Property="Foreground" Value="{DynamicResource AppDanger}" />
+        </Style>
+
+        <Style Selector="Button.tool">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Padding" Value="8,3" />
+            <Setter Property="MinWidth" Value="32" />
+            <Setter Property="Foreground" Value="{DynamicResource AppMuted}" />
+        </Style>
+
+        <!-- ================= Тег у фільтрі ================= -->
+        <Style Selector="Button.chip">
+            <Setter Property="Foreground" Value="{DynamicResource AppMuted}" />
+        </Style>
+
+        <Style Selector="Button.chip.chosen">
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppAccent}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppOnAccent}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <!-- ================= Рядок списку ================= -->
+        <Style Selector="Button.row">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+
+        <!-- ================= Картка статистики ================= -->
+        <Style Selector="Border.stat">
+            <Setter Property="Background" Value="{DynamicResource AppPanel}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="11,8" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+
+        <Style Selector="TextBlock.statValue">
+            <Setter Property="FontSize" Value="21" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <!-- ================= Бічне меню ================= -->
+        <Style Selector="Button.nav">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Padding" Value="10,7" />
+            <Setter Property="Foreground" Value="{DynamicResource AppMuted}" />
+        </Style>
+
+        <Style Selector="Button.nav.active">
+            <Setter Property="Background" Value="{DynamicResource AppBg}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppText}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </Application.Styles>
+</Application>

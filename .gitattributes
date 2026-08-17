@@ -1,0 +1,7 @@
+# У репозиторії тримаємо LF, щоб файли виглядали однаково на Windows і Mac.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.icns binary
